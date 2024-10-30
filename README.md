@@ -20,7 +20,7 @@
 - ➕ Agregar nuevos empleados con validación de datos.
 - ✏️ Editar información de empleados existentes.
 - 🔍 Filtrar y buscar empleados.
-- 🗑️ Eliminar registros de empleados.
+
 
 ## 🏗️ Arquitectura
 
