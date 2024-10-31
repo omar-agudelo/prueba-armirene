@@ -176,6 +176,52 @@ curl --location --request PUT 'http://localhost:8080/v1/user/1' --header 'Conten
     "fotoEmpleado": "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAUA"
 }}'
 ```
+## Pruebas de Carga
+Para realizar pruebas de carga en este proyecto, se han incluido tres archivos de configuración de JMeter en la raíz del repositorio. Estos archivos corresponden a distintas solicitudes y casos de uso de la API. Puedes importarlos a JMeter y ejecutarlos directamente para simular el tráfico y analizar el rendimiento de la aplicación.
+
+### Pasos para Ejecutar las Pruebas de Carga
+
+-**Abrir JMeter**: Asegúrate de tener JMeter instalado y ejecutándolo en tu máquina.
+
+-**Importar Archivos de Prueba**:  En la raíz del repositorio de Git, encontrarás tres archivos con la extensión .jmx. Importa cada uno en JMeter desde File > Open.
+
+-**Ejecutar las Pruebas**: Cada archivo simula una solicitud diferente de la API y está preconfigurado con los datos necesarios. Puedes modificar los parámetros de los hilos o el tiempo de espera para adaptarlos a tus necesidades.
+
+## Arquitectura Propuesta
+
+![aws](Arquitectura.png)
+
+### Componentes de la Arquitectura
+API Gateway (🚪): Actúa como el punto de entrada para todas las solicitudes a la API. Permite la gestión de rutas, autenticación y autorización, y escalabilidad automática.
+
+### AWS Lambda Functions:
+
+**Auth Function (🛡️)**: Se encarga de autenticar a los usuarios que acceden a la API, asegurando que solo los empleados autorizados puedan registrar su entrada y salida.
+
+**Register Entry/Exit Function (📝)**: Permite registrar el ingreso y salida de los empleados. Esta función se invoca cuando un empleado interactúa con la API para registrar su tiempo.
+
+**Employee Management Function (👥)**: Proporciona funcionalidades para gestionar la información de los empleados, como la creación, actualización y eliminación de registros.
+
+**Base de Datos (📊)**:
+**DynamoDB o RDS**: Almacena la información de los empleados y los registros de entradas y salidas. DynamoDB ofrece una solución NoSQL escalable, mientras que RDS proporciona una base de datos relacional tradicional.
+
+**Almacenamiento en S3 (📂)**: Utilizado para almacenar archivos y datos estáticos relacionados con los empleados, como documentos de identificación o certificados.
+
+**Monitoreo con CloudWatch (🔍)**: Permite la supervisión de la API, registrando métricas y eventos que ayudan a identificar problemas de rendimiento y optimizar la infraestructura.
+
+## Justificación De La Arquitectura Propuesta
+
+### Beneficios de la Solución
+
+**Automatización**: Al eliminar el proceso manual de registro en hojas de cálculo, se reduce la posibilidad de errores humanos y se optimizan los tiempos de registro.
+
+**Integración de Datos**: La API facilita la integración con otros sistemas y procesos en la organización, permitiendo un flujo de información más eficiente.
+
+**Escalabilidad**: Con el uso de AWS Lambda y API Gateway, la arquitectura puede escalar automáticamente según la demanda, garantizando un rendimiento óptimo incluso durante picos de actividad.
+
+**Seguridad**: La implementación de funciones de autenticación asegura que solo los empleados autorizados tengan acceso a la API y a la información sensible.
+
+**Monitoreo Proactivo**: Con CloudWatch, se pueden identificar y resolver problemas de rendimiento antes de que afecten a los usuarios, garantizando la disponibilidad del sistema.
 
 ## Contribuciones
 

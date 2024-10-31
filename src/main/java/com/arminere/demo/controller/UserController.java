@@ -4,6 +4,7 @@ import com.arminere.demo.dto.UserResponse;
 import com.arminere.demo.model.User;
 import com.arminere.demo.service.UserService;
 import jakarta.validation.Valid;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -13,6 +14,7 @@ import com.arminere.demo.dtomapper.UserMapper;
 
 import java.util.List;
 
+@Slf4j
 @RestController
 @RequestMapping("/v1/user")
 @Validated
@@ -28,17 +30,32 @@ public class UserController {
     @ResponseStatus(HttpStatus.CREATED)
     public ResponseEntity<UserResponse> createUser(@Valid @RequestBody UserRequest userRequest) {
         try {
+            // Log de entrada
+            log.info("Creando usuario: {}", userRequest);
+
             User user = UserMapper.toEntity(userRequest);
             User createdUser = userService.save(user);
-            return ResponseEntity.status(HttpStatus.CREATED)
-                    .body(UserMapper.toResponse(createdUser));
+
+            if (createdUser == null) {
+                log.error("El usuario creado es nulo");
+                return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(null);
+            }
+
+            UserResponse userResponse = UserMapper.toResponse(createdUser);
+            return ResponseEntity.status(HttpStatus.CREATED).body(userResponse);
+
         } catch (IllegalArgumentException e) {
-            return ResponseEntity.badRequest().body(new UserResponse().setMessage(e.getMessage()));
+            log.error("Error de argumento: {}", e.getMessage());
+            UserResponse errorResponse = new UserResponse().setMessage(e.getMessage());
+            return ResponseEntity.badRequest().body(errorResponse);
+
         } catch (Exception e) {
-            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
-                    .body(new UserResponse().setMessage("Ocurrió un error al procesar la solicitud."));
+            log.error("Ocurrió un error: {}", e.getMessage());
+            UserResponse errorResponse = new UserResponse().setMessage("Ocurrió un error al procesar la solicitud.");
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(errorResponse);
         }
     }
+
 
 
     @GetMapping
